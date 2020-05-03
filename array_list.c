@@ -17,7 +17,7 @@ struct array_list alist_create(size_t item_size, size_t initial_size) {
 
 void alist_free(struct array_list* list) {
   free(list->original_start);
-  list->data = NULL;
+  list->original_start = list->data = NULL;
   list->capacity = 0;
   list->size = 0;
   list->item_size = 0;
