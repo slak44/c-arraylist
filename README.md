@@ -33,6 +33,9 @@ To use, simply include `array_list.h` and compile `array_list.c`.
 Example:
 
 ```c
+#include <array_list.h>
+#include <stdio.h>
+
 int main() {
   struct array_list list = alist_create(sizeof(int), 5);
   alist_push(&list, &(int) {1});
