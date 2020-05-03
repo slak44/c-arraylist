@@ -1,6 +1,7 @@
 #include "array_list.h"
 #include <assert.h>
 #include <stdio.h>
+#include <criterion/criterion.h>
 
 int* get_data(int data) {
   int* ptr = malloc(sizeof(*ptr));
@@ -8,7 +9,7 @@ int* get_data(int data) {
   return ptr;
 }
 
-int main() {
+Test(array_list, basic) {
   struct array_list list = alist_create(sizeof(int), 5);
   assert(alist_at(&list, -1) == NULL);
   assert(alist_at(&list, 0) == NULL);
@@ -44,6 +45,4 @@ int main() {
   assert(*middle == 99);
 
   alist_free(&list);
-
-  return 0;
 }
