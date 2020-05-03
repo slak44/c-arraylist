@@ -1,5 +1,4 @@
-#ifndef PC2_TEMA2_ARRAY_LIST_H
-#define PC2_TEMA2_ARRAY_LIST_H
+#pragma once
 
 #include <stdlib.h>
 
@@ -65,5 +64,3 @@ __always_inline void* alist_front(struct array_list* list) { return alist_at(lis
     }                                                                                                                  \
     _Pragma("clang diagnostic pop");                                                                                   \
   } while (0)
-
-#endif // PC2_TEMA2_ARRAY_LIST_H
