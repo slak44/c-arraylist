@@ -1,17 +1,35 @@
 #include "array_list.h"
 #include <errno.h>
 #include <malloc.h>
-#include <stdio.h>
 #include <memory.h>
+#include <stdio.h>
+
+void* realloc_to_capacity(struct array_list* list) {
+  if (list->capacity == 0) {
+    size_t item_size = list->item_size;
+    alist_free(list);
+    list->item_size = item_size;
+    return NULL;
+  }
+  errno = 0;
+  void* new_memory = reallocarray(list->original_start, list->item_size, list->capacity);
+  if ((new_memory == NULL && list->capacity > 0) || errno != 0) {
+    perror("reallocarray");
+    abort();
+  }
+  list->original_start = new_memory;
+  return new_memory;
+}
 
 struct array_list alist_create(size_t item_size, size_t initial_size) {
   struct array_list new = {
-    .data = malloc(item_size * initial_size),
+    .data = NULL,
+    .original_start = NULL,
     .item_size = item_size,
     .size = 0,
     .capacity = initial_size,
   };
-  new.original_start = new.data;
+  new.data = realloc_to_capacity(&new);
   return new;
 }
 
@@ -26,22 +44,11 @@ void alist_free(struct array_list* list) {
 void reclaim_start_space(struct array_list* list, ptrdiff_t diff) {
   memmove(list->original_start, list->data, list->item_size * list->size);
   list->data = list->original_start;
-  list->capacity += diff;
-}
-
-void* realloc_to_capacity(struct array_list* list) {
-  errno = 0;
-  void* new_memory = reallocarray(list->original_start, list->item_size, list->capacity);
-  if ((new_memory == NULL && list->capacity > 0) || errno != 0) {
-    perror("reallocarray");
-    abort();
-  }
-  list->original_start = new_memory;
-  return new_memory;
+  list->capacity += diff / list->item_size;
 }
 
 void alist_push(struct array_list* list, void* item) {
-  if (list->size + 1 >= list->capacity) {
+  if (list->size + 1 > list->capacity) {
     ptrdiff_t diff = ((char*) list->data) - ((char*) list->original_start);
     if (diff != 0) {
       // Reclaim empty space at the start if available
@@ -92,8 +99,8 @@ void alist_remove_item(struct array_list* list, void* item) {
 
 void alist_clear(struct array_list* list) {
   list->size = 0;
-  list->data = list->original_start;
   ptrdiff_t diff = ((char*) list->data) - ((char*) list->original_start);
+  list->data = list->original_start;
   list->capacity += diff / list->item_size;
 }
 

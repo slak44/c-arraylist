@@ -29,7 +29,7 @@ void alist_remove(struct array_list*, size_t idx);
 
 /**
  * Remove the element pointed to by item. Invalidates all pointers after that item. The item pointer must be inside the
- * array list, otherwise it aborts.
+ * array list, otherwise it aborts. The "item" is a pointer returned by alist_at.
  */
 void alist_remove_item(struct array_list*, void* item);
 __always_inline void alist_pop_front(struct array_list* list) { alist_remove(list, 0); }
