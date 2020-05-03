@@ -285,3 +285,36 @@ Test(array_list_struct, push_works) {
   }
   cr_assert(structs.size == INITIAL_CAPACITY, "Big structs were pushed");
 }
+
+Test(array_list_sample, readme_sample_compiles) {
+  struct array_list list = alist_create(sizeof(int), 5);
+  alist_push(&list, &(int) {1});
+  alist_push(&list, &(int) {2});
+  alist_push(&list, &(int) {3});
+  alist_push(&list, &(int) {4});
+  alist_push(&list, &(int) {5});
+  alist_push(&list, &(int) {6});
+  printf("size is %d, capacity is %d\n", list.size, list.capacity);
+
+  alist_remove(&list, 1);
+  printf("size is %d, capacity is %d\n", list.size, list.capacity);
+
+  alist_shrink(&list);
+  printf("size is %d, capacity is %d\n", list.size, list.capacity);
+
+  int* second = alist_at(&list, 1);
+  printf("second item is %d\n", *second);
+
+  ALIST_FOR_EACH(int, value, &list) {
+    printf("%d\n", *value);
+    if (*value == 5) break;
+  }
+
+  ALIST_FIND(int, needle, &list, *needle > 4 && *needle % 2 == 0);
+  printf("needle is %d\n", *needle);
+
+  ALIST_FIND(int, big_number, &list, *big_number > 10000);
+  printf("was big number found?: %s\n", big_number != NULL ? "yes" : "no");
+
+  alist_free(&list);
+}
