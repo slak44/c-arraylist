@@ -1,6 +1,7 @@
 #include "array_list.h"
 #include <errno.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <memory.h>
 
 struct array_list alist_create(size_t item_size, size_t initial_size) {
@@ -29,6 +30,7 @@ void reclaim_start_space(struct array_list* list, ptrdiff_t diff) {
 }
 
 void* realloc_to_capacity(struct array_list* list) {
+  errno = 0;
   void* new_memory = reallocarray(list->original_start, list->item_size, list->capacity);
   if ((new_memory == NULL && list->capacity > 0) || errno != 0) {
     perror("reallocarray");
